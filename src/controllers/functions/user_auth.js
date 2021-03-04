@@ -1,7 +1,7 @@
-const coreControler = require("./controllerCore");
+const utils = require("../../utils");
 
 module.exports = {
   checkUserAvailability: function (req, res) {
-    return res.status(200).send(coreControler.utils.successMsg("hii", 201));
+    return res.status(200).send(utils.successMsg("hii", 201));
   },
 };

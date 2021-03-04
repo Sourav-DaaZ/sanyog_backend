@@ -26,7 +26,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use((req, res, next) => {
-  return res.status(404).send(errorMsg("Url not found", ""));
+  return res.status(404).send(errorMsg(503));
 });
 
 ////////////////////////////////////////////////////////////////
