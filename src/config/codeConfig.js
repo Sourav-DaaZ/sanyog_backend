@@ -13,6 +13,9 @@ const errorCode = {
   512: "please enter correct password",
   513: "Please enter any one data",
   514: "Need to enter any one secrect key",
+  515: "Device id is required",
+  516: "Refresh token is required",
+  517: "Internal server error",
 };
 const successCode = {
   201: "Data return seccessfully",

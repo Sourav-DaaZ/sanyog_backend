@@ -6,7 +6,7 @@ var app = express();
 const corsOrigin = async (req, res, next) => {
   var whitelist = ["https://example1.com", "http://example2.com"];
   let origin = req.header("Origin");
-  console.log(whitelist.indexOf(req.header("Origin")));
+  
   try {
     if (whitelist.indexOf(origin) !== -1 || !origin) {
       next();

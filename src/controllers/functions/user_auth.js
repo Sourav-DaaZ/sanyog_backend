@@ -2,9 +2,11 @@ const utils = require("../../utils");
 const UserInfo = require("../../models/userInfo");
 var validator = require("validator");
 const OtpData = require("../../models/regOtp");
+const TokenModal = require("../../models/token");
 const defaultConfig = require("../../config/defaultConfig");
 const { sendWelcomeEmail, sendOtpInMail } = require("./../../emails/account");
 const bcrypt = require("bcryptjs");
+const tokenFunction = require("./token");
 
 module.exports = {
   // -------------------------------------  otp sent  -------------------------------------
@@ -47,50 +49,62 @@ module.exports = {
 
   registerUser: function (req, res) {
     if (!req.body.otp) {
-      return res.status(404).send(utils.errorMsg(507));
-    }
-    OtpData.findOne({ email: req.body.email }, async function (err, eml) {
-      if (err) {
-        return res.send(400).send(utils.errorMsg(err));
-      }
-      if (eml === null) {
-        return res.status(404).send(utils.errorMsg(508));
-      }
-      if (eml.otp !== req.body.otp) {
-        return res.status(400).send(utils.errorMsg(509));
-      }
-      await UserInfo.findOne({ email: req.body.email }, async function (error, usr) {
-        if (error) {
-          return res.send(400).send(err);
+      return res.status(400).send(utils.errorMsg(507));
+    } else if (!req.body.deviceId) {
+      return res.status(400).send(utils.errorMsg(515));
+    } else {
+      OtpData.findOne({ email: req.body.email }, async function (err, eml) {
+        if (err) {
+          return res.status(400).send(utils.errorMsg(err));
+        } else if (eml === null) {
+          return res.status(404).send(utils.errorMsg(508));
+        } else if (eml.otp !== req.body.otp) {
+          return res.status(400).send(utils.errorMsg(509));
+        } else {
+          await UserInfo.findOne({ email: req.body.email }, async function (error, usr) {
+            if (error) {
+              return res.status(400).send(utils.errorMsg(err));
+            }
+            if (usr !== null) {
+              return res.status(310).send(utils.errorMsg(510));
+            }
+            let user = new UserInfo(req.body);
+            await bcrypt.hash(req.body.password, defaultConfig[defaultConfig.env].saltRound, async function (e, hash) {
+              if (e) {
+                return res.status(400).send(utils.errorMsg(e));
+              }
+              user.password = hash;
+              await user.save();
+              const aToken = await tokenFunction.accessToken(user._id.toString());
+              const userId = user._id;
+              const refreshToken = await tokenFunction.generateRefreshToken(user._id.toString());
+              let token = new TokenModal();
+              token.userId = userId;
+              token.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
+              token.device_id = req.body.deviceId;
+              await token.save();
+              // await sendWelcomeEmail(user.email , user.name);
+              return await res.status(201).send(utils.successMsg([user, token], 201));
+            });
+          }).catch((e) => {
+            res.status(500).send(utils.errorMsg(e));
+          });
         }
-        if (usr !== null) {
-          return res.status(310).send(utils.errorMsg(510));
-        }
-        let user = new UserInfo(req.body);
-        await bcrypt.hash(req.body.password, defaultConfig[defaultConfig.env].saltRound, async function (e, hash) {
-          if (e) {
-            return res.send(400).send(utils.errorMsg(e));
-          }
-          user.password = hash;
-          await user.save();
-          // await sendWelcomeEmail(user.email , user.name);
-          await res.status(201).send(utils.successMsg(user, 201));
-        });
-      }).catch((e) => {
-        res.status(500).send(utils.errorMsg(e));
+      }).catch((err) => {
+        res.status(500).send(utils.errorMsg(err));
       });
-    }).catch((err) => {
-      res.status(500).send(utils.errorMsg(err));
-    });
+    }
   },
 
   // -------------------------------------  login user  -------------------------------------
 
   loginUser: function (req, res) {
-    if (!req.body.otp && req.body.password) {
+    if (!req.body.deviceId) {
+      return res.status(400).send(utils.errorMsg(515));
+    } else if (!req.body.otp && req.body.password) {
       UserInfo.findOne({ email: req.body.email }, async function (error, user) {
         if (error) {
-          return res.send(400).send(utils.errorMsg(error));
+          return res.status(400).send(utils.errorMsg(error));
         }
         if (user === null) {
           return res.status(404).send(utils.errorMsg(511));
@@ -98,14 +112,35 @@ module.exports = {
         if (!(await bcrypt.compare(req.body.password, user.password))) {
           return res.status(400).send(utils.errorMsg(512));
         }
-        return res.status(201).send(utils.successMsg(user, 201));
+        const aToken = await tokenFunction.accessToken(user._id.toString());
+        const userConst = user;
+        const userId = user._id;
+        const refreshToken = await tokenFunction.generateRefreshToken(user._id.toString());
+        await TokenModal.findOne({ userId: user._id }, async function (er, usrdata) {
+          if (er) {
+            return res.status(400).send(utils.errorMsg(error));
+          }
+          if (usrdata === null) {
+            let token = new TokenModal();
+            token.userId = userId;
+            token.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
+            token.device_id = req.body.deviceId;
+            token.save();
+            return res.status(201).send(utils.successMsg([userConst, token]), 201);
+          } else {
+            usrdata.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
+            usrdata.device_id = req.body.deviceId;
+            usrdata.save();
+            return res.status(201).send(utils.successMsg([userConst, usrdata], 201));
+          }
+        });
       }).catch((err) => {
         return res.status(500).send(utils.errorMsg(err));
       });
     } else if (req.body.otp && !req.body.password) {
       OtpData.findOne({ email: req.body.email }, async function (err, eml) {
         if (err) {
-          return res.send(400).send(utils.errorMsg(err));
+          return res.status(400).send(utils.errorMsg(err));
         }
         if (eml === null) {
           return res.status(404).send(utils.errorMsg(508));
@@ -115,12 +150,33 @@ module.exports = {
         }
         await UserInfo.findOne({ email: req.body.email }, async function (e, usr) {
           if (e) {
-            return res.send(400).send(utils.errorMsg(e));
+            return res.status(400).send(utils.errorMsg(e));
           }
           if (usr === null) {
             return res.status(400).send(utils.errorMsg(511));
           }
-          return res.status(201).send(utils.successMsg(usr, 201));
+          const aToken = await tokenFunction.accessToken(usr._id.toString());
+          const userConst = usr;
+          const userId = usr._id;
+          const refreshToken = await tokenFunction.generateRefreshToken(usr._id.toString());
+          await TokenModal.findOne({ email: req.body.email }, async function (er, usrdata) {
+            if (er) {
+              return res.status(400).send(utils.errorMsg(error));
+            }
+            if (usrdata === null) {
+              let token = new TokenModal();
+              token.userId = userId;
+              token.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
+              token.device_id = req.body.deviceId;
+              token.save();
+              return res.status(201).send(utils.successMsg([userConst, token]), 201);
+            } else {
+              usrdata.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
+              usrdata.device_id = req.body.deviceId;
+              usrdata.save();
+              return res.status(201).send(utils.successMsg([userConst, usrdata], 201));
+            }
+          });
         }).catch((e) => {
           return res.status(500).send(utils.errorMsg(e));
         });
@@ -128,9 +184,9 @@ module.exports = {
         return res.status(500).send(utils.errorMsg(err));
       });
     } else if (req.body.otp && req.body.password) {
-      return res.status(404).send(utils.errorMsg(513));
+      return res.status(400).send(utils.errorMsg(513));
     } else if (!req.body.otp && !req.body.password) {
-      return res.status(404).send(utils.errorMsg(514));
+      return res.status(400).send(utils.errorMsg(514));
     }
   },
 };

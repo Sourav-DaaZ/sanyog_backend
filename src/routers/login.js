@@ -18,4 +18,9 @@ router.get("/login", corsOrigin, async (req, res) => {
   controllerObj.controller(req, res, action);
 });
 
+router.get("/refresh_token", corsOrigin, async (req, res) => {
+  const action = "refresh_token";
+  controllerObj.controller(req, res, action);
+});
+
 module.exports = router;

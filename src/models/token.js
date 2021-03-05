@@ -1,18 +1,14 @@
 const mongoose = require("mongoose");
-const timeStamp = require("../utils/timeStamp.js");
-
-var timeStampData = timeStamp;
 
 const Schema = mongoose.Schema;
 
 const tokenSchema = new Schema({
-  email: {
+  userId: {
     type: String,
     required: true,
   },
   tokens: [
     {
-      type: Array,
       access_token: {
         type: String,
         required: true,

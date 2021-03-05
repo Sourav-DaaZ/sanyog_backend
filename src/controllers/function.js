@@ -11,4 +11,8 @@ module.exports = {
     controller: "user_auth",
     function: "loginUser",
   },
+  refresh_token: {
+    controller: "token",
+    function: "refreshToken",
+  },
 };
