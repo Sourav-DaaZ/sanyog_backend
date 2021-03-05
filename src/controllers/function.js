@@ -1,6 +1,14 @@
 module.exports = {
-  check_user_availability: {
+  register_user: {
     controller: "user_auth",
-    function: "checkUserAvailability",
+    function: "registerUser",
+  },
+  email_verification: {
+    controller: "user_auth",
+    function: "emailVerification",
+  },
+  login_user: {
+    controller: "user_auth",
+    function: "loginUser",
   },
 };

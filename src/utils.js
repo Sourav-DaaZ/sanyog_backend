@@ -2,7 +2,6 @@ const { errorCode, successCode } = require("./config/codeConfig");
 
 module.exports = {
   errorMsg: function (code) {
-    console.log(errorCode[code])
     if (errorCode[code] !== undefined) {
       return {
         error_code: code,

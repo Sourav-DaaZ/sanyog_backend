@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { errorCode } = require("../config/codeConfig");
 
 const userSchema = new mongoose.Schema(
   {
@@ -8,6 +9,7 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
+      required: true,
       trim: true,
       lowercase: true,
     },
@@ -15,20 +17,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       minlength: 7,
       trim: true,
-      validate(value) {
-        if (value.toLowerCase().includes("password")) {
-          throw new Error('Password cannot contain "password"');
-        }
-      },
     },
-    tokens: [
-      {
-        token: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
     images: Array,
   },
   { timestamps: true }
