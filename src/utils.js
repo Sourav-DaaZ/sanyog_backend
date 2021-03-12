@@ -41,4 +41,12 @@ module.exports = {
       }
     }
   },
+
+  removeKeyForReturn: async(obj, keys) => {
+      if(keys === undefined) keys = ['password'];
+      for (var key in keys){
+        obj[keys[key]] = undefined;
+      }
+      return obj
+  }
 };

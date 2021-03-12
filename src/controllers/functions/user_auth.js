@@ -83,8 +83,9 @@ module.exports = {
               token.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
               token.device_id = req.body.deviceId;
               await token.save();
+              utils.removeKeyForReturn(user);
               // await sendWelcomeEmail(user.email , user.name);
-              return await res.status(201).send(utils.successMsg([user, token], 201));
+              return await res.status(201).send(utils.successMsg(token.tokens[0], 201));
             });
           }).catch((e) => {
             res.status(500).send(utils.errorMsg(e));
@@ -107,13 +108,13 @@ module.exports = {
           return res.status(400).send(utils.errorMsg(error));
         }
         if (user === null) {
-          return res.status(404).send(utils.errorMsg(511));
+          return res.status(400).send(utils.errorMsg(511));
         }
         if (!(await bcrypt.compare(req.body.password, user.password))) {
           return res.status(400).send(utils.errorMsg(512));
         }
         const aToken = await tokenFunction.accessToken(user._id.toString());
-        const userConst = user;
+        utils.removeKeyForReturn(user);
         const userId = user._id;
         const refreshToken = await tokenFunction.generateRefreshToken(user._id.toString());
         await TokenModal.findOne({ userId: user._id }, async function (er, usrdata) {
@@ -126,12 +127,12 @@ module.exports = {
             token.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
             token.device_id = req.body.deviceId;
             token.save();
-            return res.status(201).send(utils.successMsg([userConst, token]), 201);
+            return res.status(201).send(utils.successMsg(token.tokens[0], 201));
           } else {
             usrdata.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
             usrdata.device_id = req.body.deviceId;
             usrdata.save();
-            return res.status(201).send(utils.successMsg([userConst, usrdata], 201));
+            return res.status(201).send(utils.successMsg(usrdata.tokens[0], 201));
           }
         });
       }).catch((err) => {
@@ -156,7 +157,7 @@ module.exports = {
             return res.status(400).send(utils.errorMsg(511));
           }
           const aToken = await tokenFunction.accessToken(usr._id.toString());
-          const userConst = usr;
+          utils.removeKeyForReturn(usr);
           const userId = usr._id;
           const refreshToken = await tokenFunction.generateRefreshToken(usr._id.toString());
           await TokenModal.findOne({ email: req.body.email }, async function (er, usrdata) {
@@ -169,12 +170,12 @@ module.exports = {
               token.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
               token.device_id = req.body.deviceId;
               token.save();
-              return res.status(201).send(utils.successMsg([userConst, token]), 201);
+              return res.status(201).send(utils.successMsg(token.tokens[0], 201));
             } else {
               usrdata.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
               usrdata.device_id = req.body.deviceId;
               usrdata.save();
-              return res.status(201).send(utils.successMsg([userConst, usrdata], 201));
+              return res.status(201).send(utils.successMsg(usrdata.tokens[0], 201));
             }
           });
         }).catch((e) => {

@@ -13,7 +13,7 @@ router.post("/register_user", corsOrigin, async (req, res) => {
   controllerObj.controller(req, res, action);
 });
 
-router.get("/login", corsOrigin, async (req, res) => {
+router.post("/login", corsOrigin, async (req, res) => {
   const action = "login_user";
   controllerObj.controller(req, res, action);
 });
