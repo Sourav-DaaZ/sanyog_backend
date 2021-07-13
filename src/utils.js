@@ -4,7 +4,7 @@ module.exports = {
   errorMsg: function (code) {
     if (errorCode[code] !== undefined) {
       return {
-        error_code: code,
+        error_code: "E-"+code,
         message: errorCode[code],
       };
     } else {
@@ -19,12 +19,12 @@ module.exports = {
       if (data !== undefined) {
         return {
           data: data,
-          success_code: code,
+          success_code: "S-"+code,
           message: successCode[code],
         };
       } else {
         return {
-          success_code: code,
+          success_code: "S-"+code,
           message: successCode[code],
         };
       }

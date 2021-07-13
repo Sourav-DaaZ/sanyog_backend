@@ -38,7 +38,28 @@ module.exports = {
         await otp_model.save();
         // await sendOtpInMail(user_otp.email, user_otp.otp);
 
-        return await res.status(200).send(utils.successMsg(undefined, 202));
+        return res.status(200).send(utils.successMsg(undefined, 202));
+      }).catch((err) => {
+        res.status(500).send(utils.errorMsg(err));
+      });
+    }
+  },
+
+  userNameVerification: function (req, res) {
+    if (!req.body.user_name) {
+      return res.status(400).send(utils.errorMsg(519));
+    } else {
+      UserInfo.findOne({ user_name: req.body.user_name }, function (err, eml) {
+        if (err) {
+          return res.status(400).send(utils.errorMsg(err));
+        }
+        // if email is not register in otp table
+        if (eml === null) {
+          // sendOtpInMail(eml.email, eml.otp);
+          return res.status(200).send(utils.successMsg(undefined, 203));
+        }
+
+        return res.status(200).send(utils.errorMsg(518));
       }).catch((err) => {
         res.status(500).send(utils.errorMsg(err));
       });
@@ -61,7 +82,7 @@ module.exports = {
         } else if (eml.otp !== req.body.otp) {
           return res.status(400).send(utils.errorMsg(509));
         } else {
-          await UserInfo.findOne({ email: req.body.email }, async function (error, usr) {
+          await UserInfo.findOne({ $or: [{ email: req.body.email }, { user_name: req.body.user_name }] }, async function (error, usr) {
             if (error) {
               return res.status(400).send(utils.errorMsg(err));
             }

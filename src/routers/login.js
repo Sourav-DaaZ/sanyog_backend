@@ -23,4 +23,9 @@ router.get("/refresh_token", corsOrigin, async (req, res) => {
   controllerObj.controller(req, res, action);
 });
 
+router.post("/check_username", corsOrigin, async (req, res) => {
+  const action = "verify_username";
+  controllerObj.controller(req, res, action);
+});
+
 module.exports = router;

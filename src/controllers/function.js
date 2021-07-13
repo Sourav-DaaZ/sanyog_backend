@@ -15,4 +15,8 @@ module.exports = {
     controller: "token",
     function: "refreshToken",
   },
+  verify_username: {
+    controller: "user_auth",
+    function: "userNameVerification",
+  },
 };

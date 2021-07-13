@@ -8,7 +8,7 @@ const corsOrigin = async (req, res, next) => {
   let origin = req.header("Origin");
   
   try {
-    if (whitelist.indexOf(origin) !== -1 || !origin) {
+    if (!whitelist.indexOf(origin) !== -1 || !origin) {
       next();
     } else {
       return res.status(500).send(errorMsg(502));

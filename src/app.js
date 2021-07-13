@@ -19,7 +19,12 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/api", router.loginRouter);
+try {
+  app.use("/api", router.loginRouter);  
+} catch (error) {
+  return res.status(500).send(errorMsg(error))
+}
+
 
 //.............middleware for error handeling...................
 app.use((req, res, next) => {
