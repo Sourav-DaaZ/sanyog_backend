@@ -21,6 +21,7 @@ app.use(passport.session());
 
 try {
   app.use("/api", router.loginRouter);  
+  app.use("/api", router.dashboardRouter);  
 } catch (error) {
   return res.status(500).send(errorMsg(error))
 }

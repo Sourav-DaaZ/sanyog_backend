@@ -19,4 +19,8 @@ module.exports = {
     controller: "user_auth",
     function: "userNameVerification",
   },
+  find_user: {
+    controller: "dashboard_auth",
+    function: "searchUser",
+  },
 };

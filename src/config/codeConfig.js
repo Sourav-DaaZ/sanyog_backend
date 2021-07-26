@@ -18,6 +18,7 @@ const errorCode = {
   517: "Internal server error",
   518: "Not Available",
   519: "User_name required",
+  520: "User name not found",
 };
 const successCode = {
   201: "Data return seccessfully",
