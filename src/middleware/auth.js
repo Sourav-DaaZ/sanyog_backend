@@ -1,16 +1,14 @@
 const jwt = require("jsonwebtoken");
-// const User = require('../models/user');
+const User = require('../models/userInfo');
 const { errorMsg } = require("../utils");
-if (process.env.NODE_ENV !== "prod") {
-  require("dotenv").config();
-}
+const defaultConfig = require("../config/defaultConfig");
+
 
 const auth = async (req, res, next) => {
   try {
     const token = req.header("Authorization").replace("Bearer ", "");
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findOne({ _id: decoded._id, "tokens.token": token });
-
+    const decoded = jwt.verify(token, defaultConfig[defaultConfig.env].accessTokenSecret);
+    const user = await User.findOne({ _id: decoded._id });
     if (!user) {
       throw new Error();
     }
@@ -19,6 +17,7 @@ const auth = async (req, res, next) => {
     req.user = user;
     next();
   } catch (e) {
+    console.log(e)
     return res.status(401).send(errorMsg(501));
   }
 };

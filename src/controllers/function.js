@@ -19,8 +19,16 @@ module.exports = {
     controller: "user_auth",
     function: "userNameVerification",
   },
-  find_user: {
+  create_task: {
     controller: "dashboard_auth",
-    function: "searchUser",
+    function: "createTask",
+  },
+  create_project: {
+    controller: "dashboard_auth",
+    function: "createProject",
+  },
+  all_project: {
+    controller: "dashboard_auth",
+    function: "allProject",
   },
 };

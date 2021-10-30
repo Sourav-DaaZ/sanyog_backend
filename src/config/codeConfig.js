@@ -18,12 +18,13 @@ const errorCode = {
   517: "Internal server error",
   518: "Not Available",
   519: "User_name required",
-  520: "User name not found",
+  520: "please enter your name",
 };
 const successCode = {
   201: "Data return seccessfully",
   202: "OTP Sent seccessfully",
   203: "Available",
+  204: "Data save seccessfully",
 };
 
 module.exports = { errorCode, successCode };

@@ -46,10 +46,10 @@ module.exports = {
   },
 
   userNameVerification: function (req, res) {
-    if (!req.body.user_name) {
+    if (!req.body.email) {
       return res.status(400).send(utils.errorMsg(519));
     } else {
-      UserInfo.findOne({ user_name: req.body.user_name }, function (err, eml) {
+      UserInfo.findOne({ email: req.body.email }, function (err, eml) {
         if (err) {
           return res.status(400).send(utils.errorMsg(err));
         }
@@ -71,8 +71,6 @@ module.exports = {
   registerUser: function (req, res) {
     if (!req.body.otp) {
       return res.status(400).send(utils.errorMsg(507));
-    } else if (!req.body.deviceId) {
-      return res.status(400).send(utils.errorMsg(515));
     } else {
       OtpData.findOne({ email: req.body.email }, async function (err, eml) {
         if (err) {
@@ -82,7 +80,7 @@ module.exports = {
         } else if (eml.otp !== req.body.otp) {
           return res.status(400).send(utils.errorMsg(509));
         } else {
-          await UserInfo.findOne({ $or: [{ email: req.body.email }, { user_name: req.body.user_name }] }, async function (error, usr) {
+          await UserInfo.findOne({ email: req.body.email }, async function (error, usr) {
             if (error) {
               return res.status(400).send(utils.errorMsg(err));
             }
@@ -102,7 +100,6 @@ module.exports = {
               let token = new TokenModal();
               token.userId = userId;
               token.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
-              token.device_id = req.body.deviceId;
               await token.save();
               utils.removeKeyForReturn(user);
               // await sendWelcomeEmail(user.email , user.name);
@@ -121,9 +118,7 @@ module.exports = {
   // -------------------------------------  login user  -------------------------------------
 
   loginUser: function (req, res) {
-    if (!req.body.deviceId) {
-      return res.status(400).send(utils.errorMsg(515));
-    } else if (!req.body.otp && req.body.password) {
+    if (!req.body.otp && req.body.password) {
       UserInfo.findOne({ email: req.body.email }, async function (error, user) {
         if (error) {
           return res.status(400).send(utils.errorMsg(error));
@@ -146,12 +141,10 @@ module.exports = {
             let token = new TokenModal();
             token.userId = userId;
             token.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
-            token.device_id = req.body.deviceId;
             token.save();
             return res.status(201).send(utils.successMsg(token.tokens[0], 201));
           } else {
             usrdata.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
-            usrdata.device_id = req.body.deviceId;
             usrdata.save();
             return res.status(201).send(utils.successMsg(usrdata.tokens[0], 201));
           }
@@ -189,12 +182,10 @@ module.exports = {
               let token = new TokenModal();
               token.userId = userId;
               token.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
-              token.device_id = req.body.deviceId;
               token.save();
               return res.status(201).send(utils.successMsg(token.tokens[0], 201));
             } else {
               usrdata.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
-              usrdata.device_id = req.body.deviceId;
               usrdata.save();
               return res.status(201).send(utils.successMsg(usrdata.tokens[0], 201));
             }
