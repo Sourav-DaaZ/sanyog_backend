@@ -19,6 +19,11 @@ const errorCode = {
   518: "Not Available",
   519: "User_name required",
   520: "please enter your name",
+  521: "please enter project_id",
+  522: "start_date and end_date are requred",
+  523: "please enter task_id",
+  524: "task is not there",
+  525: "already assigned",
 };
 const successCode = {
   201: "Data return seccessfully",

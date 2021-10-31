@@ -14,4 +14,19 @@ router.get("/all_project", auth, async (req, res) => {
   controllerObj.controller(req, res, action);
 });
 
+router.post("/create_task", auth, async (req, res) => {
+  const action = "create_task";
+  controllerObj.controller(req, res, action);
+});
+
+router.get("/all_task", auth, async (req, res) => {
+  const action = "all_task";
+  controllerObj.controller(req, res, action);
+});
+
+router.post("/assign_task", auth, async (req, res) => {
+  const action = "assign_task";
+  controllerObj.controller(req, res, action);
+});
+
 module.exports = router;

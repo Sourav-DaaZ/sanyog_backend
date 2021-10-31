@@ -19,10 +19,6 @@ module.exports = {
     controller: "user_auth",
     function: "userNameVerification",
   },
-  create_task: {
-    controller: "dashboard_auth",
-    function: "createTask",
-  },
   create_project: {
     controller: "dashboard_auth",
     function: "createProject",
@@ -30,5 +26,17 @@ module.exports = {
   all_project: {
     controller: "dashboard_auth",
     function: "allProject",
+  },
+  create_task: {
+    controller: "dashboard_auth",
+    function: "createTask",
+  },
+  assign_task: {
+    controller: "dashboard_auth",
+    function: "assignTask",
+  },
+  all_task: {
+    controller: "dashboard_auth",
+    function: "allTask",
   },
 };

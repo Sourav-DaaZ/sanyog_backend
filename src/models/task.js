@@ -1,9 +1,12 @@
 const mongoose = require("mongoose");
 const { errorCode } = require("../config/codeConfig");
+const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const taskSchema = new mongoose.Schema(
   {
-    taskId: { type: Number, default: 0 },
+    task_id: {
+      type: Number
+    },
     name: {
       type: String,
       trim: true,
@@ -12,14 +15,22 @@ const taskSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    project_name: {
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    project_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Project",
     },
     taskAssigned: [
       {
-        user: { type: String },
-        cost: { type: Number },
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        time: { type: Number, default: 0 },
+        cost: { type: Number, default: 0 },
       },
     ],
     status: {
@@ -27,8 +38,7 @@ const taskSchema = new mongoose.Schema(
       date: { type: String }
     },
     parentTask: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Task",
+      type: Number
     },
     start_date: {
       type: String,
@@ -40,20 +50,7 @@ const taskSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-var CounterSchema = mongoose.Schema({
-  _id: { type: String, required: true },
-  seq: { type: Number, default: 0 },
-});
-var counter = mongoose.model("counter", CounterSchema);
-
-taskSchema.pre("save", function (next) {
-  var doc = this;
-  counter.findByIdAndUpdate({ _id: "entityId" }, { $inc: { seq: 1 } }, function (error, count) {
-    if (error) return next(error);
-    doc.taskId = count.seq;
-    next();
-  });
-});
+taskSchema.plugin(AutoIncrement, {inc_field: 'task_id'});
 
 const Task = mongoose.model("Task", taskSchema);
 

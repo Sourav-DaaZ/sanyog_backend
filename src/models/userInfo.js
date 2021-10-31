@@ -20,9 +20,7 @@ const userSchema = new mongoose.Schema(
     },
     tasks: [
       {
-        taskId: {
           type: mongoose.Schema.Types.ObjectId, ref: 'Task'
-        }
       },
     ],
     images: Array,
