@@ -39,4 +39,8 @@ module.exports = {
     controller: "dashboard_auth",
     function: "allTask",
   },
+  edit_task: {
+    controller: "dashboard_auth",
+    function: "editTask",
+  },
 };

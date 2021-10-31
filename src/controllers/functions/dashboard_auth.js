@@ -47,6 +47,7 @@ module.exports = {
             if (er) {
               return res.status(400).send(utils.errorMsg(er));
             }
+            
             if (tsk !== null) {
               if (eml.tasks && eml.tasks.includes(req.body.task_id)) {
                 if (req.body.deleteUser) {
@@ -54,26 +55,27 @@ module.exports = {
                   if (ind > -1) {
                     eml.tasks.splice(ind, 1);
                   }
-                  tsk.taskAssigned = tsk.taskAssigned.filter((obj) => obj.user === eml._id);
+
+                  tsk.taskAssigned = tsk.taskAssigned.filter((obj) => String(obj.user) != String(eml._id));
                   eml.save();
                   tsk.save();
                   return res.status(400).send(utils.successMsg(undefined, 204));
-                } else if (req.body.cost) {
+                }else if (req.body.cost) {
                   tsk.taskAssigned.map((x) => (String(x.user) == eml._id ? (x.cost = req.body.cost) : null));
                   tsk.save();
                   return res.status(400).send(utils.successMsg(undefined, 204));
                 }
                 return res.status(400).send(utils.errorMsg(525));
+              } else {
+                eml.tasks = req.body.task_id;
+                tsk.taskAssigned.push({
+                  user: eml._id,
+                  ...(req.body.cost && { cost: req.body.cost }),
+                });
+                tsk.save();
+                eml.save();
+                return res.status(200).send(utils.successMsg(undefined, 204));
               }
-              eml.tasks = req.body.task_id;
-              let assignedTask = {
-                user: eml._id,
-                ...(req.body.cost && { cost: req.body.cost }),
-              };
-              tsk.taskAssigned.push(assignedTask);
-              eml.save();
-              tsk.save();
-              return res.status(200).send(utils.successMsg(undefined, 204));
             }
             return res.status(400).send(utils.errorMsg(524));
           });
@@ -113,6 +115,47 @@ module.exports = {
         .catch((err) => {
           return res.status(400).send(utils.errorMsg(err));
         });
+    }
+  },
+
+  editTask: function (req, res) {
+    if (!req.body.task_id) {
+      return res.status(400).send(utils.errorMsg(523));
+    } else {
+      Task.findOne({ _id: req.body.task_id }, function (err, tsk) {
+        if (err) {
+          return res.status(400).send(utils.errorMsg(err));
+        } else if (tsk === null) {
+          return res.status(400).send(utils.errorMsg(524));
+        } else {
+          if (String(tsk.owner) == req.user._id) {
+            if (req.body.name) {
+              tsk.name = req.body.name;
+            }
+            if (req.body.details) {
+              tsk.details = req.body.details;
+            }
+            if (req.body.start_date) {
+              tsk.start_date = req.body.start_date;
+            }
+            if (req.body.end_date) {
+              tsk.end_date = req.body.end_date;
+            }
+            if (req.body.status) {
+              tsk.status = req.body.status;
+            }
+          } else {
+            if (req.body.status) {
+              tsk.status = req.body.status;
+            }
+            if (req.body.time) {
+              tsk.taskAssigned.map((x) => (String(x.user) == req.user._id ? (x.time = Number(x.time) + Number(req.body.time)) : null));
+            }
+          }
+          tsk.save();
+          return res.status(200).send(utils.successMsg(undefined, 204));
+        }
+      });
     }
   },
 

@@ -29,4 +29,9 @@ router.post("/assign_task", auth, async (req, res) => {
   controllerObj.controller(req, res, action);
 });
 
+router.patch("/edit_task", auth, async (req, res) => {
+  const action = "edit_task";
+  controllerObj.controller(req, res, action);
+});
+
 module.exports = router;
