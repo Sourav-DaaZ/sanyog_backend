@@ -20,13 +20,13 @@ module.exports = {
   },
 
   allTask: function (req, res) {
-    Task.find({ $and: [{project_id: req.query.project_id},{$or: [{ owner: req.user._id }, { "taskAssigned.user": req.user._id }]}]})
+    Task.find({ $and: [{ project_id: req.query.project_id }, { $or: [{ owner: req.user._id }, { "taskAssigned.user": req.user._id }] }] })
       .populate("project_id")
       .exec(function (err, data) {
         if (err) {
           return res.status(400).send(utils.errorMsg(err));
         }
-        return res.status(200).send(utils.successMsg(data, 201));
+        return res.status(200).send(utils.successMsg({data:data,owner: req.user._id}, 201));
       });
   },
 
@@ -46,7 +46,7 @@ module.exports = {
             if (er) {
               return res.status(400).send(utils.errorMsg(er));
             }
-            
+
             if (tsk !== null) {
               if (eml.tasks && eml.tasks.includes(req.body.task_id)) {
                 if (req.body.deleteUser) {
@@ -59,7 +59,7 @@ module.exports = {
                   eml.save();
                   tsk.save();
                   return res.status(400).send(utils.successMsg(undefined, 204));
-                }else if (req.body.cost) {
+                } else if (req.body.cost) {
                   tsk.taskAssigned.map((x) => (String(x.user) == eml._id ? (x.cost = req.body.cost) : null));
                   tsk.save();
                   return res.status(400).send(utils.successMsg(undefined, 204));
@@ -93,7 +93,6 @@ module.exports = {
     } else if (!req.body.start_date || !req.body.end_date) {
       return res.status(400).send(utils.errorMsg(522));
     } else {
-      let taskData = new Task(req.body);
       if (req.body.parentTask) {
         Task.findOne({ task_id: req.body.parentTask }, function (err, tsk) {
           if (err) {
@@ -101,19 +100,31 @@ module.exports = {
           } else if (tsk === null) {
             return res.status(400).send(utils.errorMsg(524));
           } else {
+            let taskData = new Task(req.body);
             taskData.parentTask = req.body.parentTask;
+            taskData.owner = req.user._id;
+            taskData
+              .save()
+              .then(() => {
+                return res.status(200).send(utils.successMsg(undefined, 204));
+              })
+              .catch((err) => {
+                return res.status(400).send(utils.errorMsg(err));
+              });
           }
         });
+      } else {
+        let taskData = new Task(req.body);
+        taskData.owner = req.user._id;
+        taskData
+          .save()
+          .then(() => {
+            return res.status(200).send(utils.successMsg(undefined, 204));
+          })
+          .catch((err) => {
+            return res.status(400).send(utils.errorMsg(err));
+          });
       }
-      taskData.owner = req.user._id;
-      taskData
-        .save()
-        .then(() => {
-          return res.status(200).send(utils.successMsg(undefined, 204));
-        })
-        .catch((err) => {
-          return res.status(400).send(utils.errorMsg(err));
-        });
     }
   },
 
@@ -143,6 +154,24 @@ module.exports = {
             if (req.body.status) {
               tsk.status = req.body.status;
             }
+            if (req.body.parentTask) {
+              Task.findOne({ task_id: req.body.parentTask }, function (er, ts) {
+                
+                if (er) {
+                  return res.status(400).send(utils.errorMsg(err));
+                } else if (ts === null) {
+                  return res.status(400).send(utils.errorMsg(524));
+                } else {
+                  tsk.parentTask = req.body.parentTask;
+                  tsk.save();
+                  return res.status(200).send(utils.successMsg(undefined, 204));
+                }
+              });
+            }else{
+              tsk.save();
+              return res.status(200).send(utils.successMsg(undefined, 204));
+            }
+            
           } else {
             if (req.body.status) {
               tsk.status = req.body.status;
@@ -150,9 +179,9 @@ module.exports = {
             if (req.body.time) {
               tsk.taskAssigned.map((x) => (String(x.user) == req.user._id ? (x.time = Number(x.time) + Number(req.body.time)) : null));
             }
+            tsk.save();
+            return res.status(200).send(utils.successMsg(undefined, 204));
           }
-          tsk.save();
-          return res.status(200).send(utils.successMsg(undefined, 204));
         }
       });
     }
