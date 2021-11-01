@@ -20,13 +20,12 @@ module.exports = {
   },
 
   allTask: function (req, res) {
-    Task.find({ $or: [{ owner: req.user._id }, { "taskAssigned.user": req.user._id }] })
+    Task.find({ $and: [{project_id: req.query.project_id},{$or: [{ owner: req.user._id }, { "taskAssigned.user": req.user._id }]}]})
       .populate("project_id")
       .exec(function (err, data) {
         if (err) {
           return res.status(400).send(utils.errorMsg(err));
         }
-        console.log(data);
         return res.status(200).send(utils.successMsg(data, 201));
       });
   },
