@@ -29,6 +29,25 @@ module.exports = {
         return res.status(200).send(utils.successMsg({data:data,owner: req.user._id}, 201));
       });
   },
+  
+  getTaskStatus: function (req, res) {
+    Task.findOne({ task_id: req.query.task_id },function (err, data) {
+        if (err) {
+          return res.status(400).send(utils.errorMsg(err));
+        }
+        return res.status(200).send(utils.successMsg( {status:data.status}, 201));
+      })
+  },
+
+  getAssignedMember: function (req, res) {
+    Task.findOne({ _id: req.query.id }).populate("taskAssigned.user")
+    .exec(function (err, data) {
+        if (err) {
+          return res.status(400).send(utils.errorMsg(err));
+        }
+        return res.status(200).send(utils.successMsg( data.taskAssigned, 201));
+      })
+  },
 
   assignTask: function (req, res) {
     if (!req.body.task_id) {

@@ -43,4 +43,12 @@ module.exports = {
     controller: "dashboard_auth",
     function: "editTask",
   },
+  get_task_status: {
+    controller: "dashboard_auth",
+    function: "getTaskStatus",
+  },
+  get_assigned_member: {
+    controller: "dashboard_auth",
+    function: "getAssignedMember",
+  },
 };

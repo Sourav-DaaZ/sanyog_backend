@@ -34,4 +34,14 @@ router.patch("/edit_task", auth, async (req, res) => {
   controllerObj.controller(req, res, action);
 });
 
+router.get("/get_task_status", auth, async (req, res) => {
+  const action = "get_task_status";
+  controllerObj.controller(req, res, action);
+});
+
+router.get("/get_assigned_members", auth, async (req, res) => {
+  const action = "get_assigned_member";
+  controllerObj.controller(req, res, action);
+});
+
 module.exports = router;

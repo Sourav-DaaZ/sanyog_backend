@@ -33,7 +33,7 @@ const taskSchema = new mongoose.Schema(
         cost: { type: Number, default: 0 },
       },
     ],
-    status: { type: String },
+    status: { type: String, default: 'created' },
     parentTask: {
       type: Number
     },
