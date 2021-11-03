@@ -44,4 +44,9 @@ router.get("/get_assigned_members", auth, async (req, res) => {
   controllerObj.controller(req, res, action);
 });
 
+router.get("/get_tag_task", auth, async (req, res) => {
+  const action = "get_tag_task";
+  controllerObj.controller(req, res, action);
+});
+
 module.exports = router;

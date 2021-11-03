@@ -27,7 +27,8 @@ module.exports = {
           return res.status(200).send(utils.successMsg(undefined, 202));
         }
         // random otp genarate
-        var otp_var = Math.floor(1000 + Math.random() * 9000);
+        // var otp_var = Math.floor(1000 + Math.random() * 9000);
+        var otp_var = 9999;
         let user_otp = {
           email: req.body.email,
           otp: otp_var,

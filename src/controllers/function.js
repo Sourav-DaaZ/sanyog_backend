@@ -51,4 +51,8 @@ module.exports = {
     controller: "dashboard_auth",
     function: "getAssignedMember",
   },
+  get_tag_task: {
+    controller: "dashboard_auth",
+    function: "tagTask",
+  },
 };
