@@ -16,6 +16,14 @@ const projectSchema = new mongoose.Schema(
       type: String,
       require: true
     },
+    projectAssigned: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        }
+      },
+    ],
     task_list: [
       {
         type: mongoose.Schema.Types.ObjectId,

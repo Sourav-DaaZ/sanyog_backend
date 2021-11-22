@@ -24,6 +24,7 @@ const errorCode = {
   523: "please enter task_id",
   524: "task is not there",
   525: "already assigned",
+  526: "Please enter correct admin code",
 };
 const successCode = {
   201: "Data return seccessfully",

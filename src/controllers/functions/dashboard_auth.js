@@ -11,11 +11,30 @@ module.exports = {
   // -------------------------------------  dashboard module  -------------------------------------
 
   allProject: function (req, res) {
-    Project.find({ owner: req.user._id }, async function (err, data) {
+    Project.find({$or:[{ 'owner': req.user._id },{'projectAssigned.user': req.user._id}]}).populate("task_list").populate("projectAssigned.user")
+    .exec(async function (err, data) {
       if (err) {
         return res.status(400).send(utils.errorMsg(err));
       }
-      return res.status(200).send(utils.successMsg(data, 201));
+      let cost = [];
+      let dateExp = [];
+      let taskStatus = [];
+      let temp = [];
+      data.map((x,index)=>(
+        cost[index] = 0,
+        dateExp[index] = false,
+        temp = [],
+        x.task_list.map((y, i)=>(
+          new Date(y.end_date) < new Date()?dateExp[index] = true:null,
+          temp.push(y.status),
+          x.task_list.length == i+1 ?x.task_list.includes('in progress') || x.task_list.includes('complete')?x.task_list.includes('in progress')?taskStatus[index] = 'in progress':taskStatus[index] = 'complete':taskStatus[index] = 'created':null,
+          y.taskAssigned.map((z)=>(
+            cost[index] = cost[index] + z.cost
+          ))
+        ))
+      ))
+
+      return res.status(200).send(utils.successMsg({data:data, cost:cost, dateExp:dateExp, taskStatus: taskStatus}, 201));
     });
   },
 
@@ -115,6 +134,56 @@ module.exports = {
     }
   },
 
+  assignProject: function (req, res) {
+    if (!req.body.project_id) {
+      return res.status(400).send(utils.errorMsg(523));
+    } else if (!req.body.email) {
+      return res.status(400).send(utils.errorMsg(505));
+    } else {
+      UserInfo.findOne({ email: req.body.email }, function (err, eml) {
+        if (err) {
+          return res.status(400).send(utils.errorMsg(err));
+        } else if (eml === null) {
+          return res.status(400).send(utils.errorMsg(511));
+        } else {
+          Project.findOne({ _id: req.body.project_id }, function (er, pjct) {
+            if (er) {
+              return res.status(400).send(utils.errorMsg(er));
+            }
+
+            if (pjct !== null) {
+              if (eml.projects && eml.projects.includes(req.body.project_id)) {
+                if (req.body.deleteUser) {
+                  const ind = eml.projects.indexOf(req.body.project_id);
+                  if (ind > -1) {
+                    eml.projects.splice(ind, 1);
+                  }
+
+                  pjct.projectAssigned = pjct.projectAssigned.filter((obj) => String(obj.user) != String(eml._id));
+                  eml.save();
+                  pjct.save();
+                  return res.status(400).send(utils.successMsg(undefined, 204));
+                }
+                return res.status(400).send(utils.errorMsg(525));
+              } else {
+                eml.projects = req.body.project_id;
+                pjct.projectAssigned.push({
+                  user: eml._id
+                });
+                pjct.save();
+                eml.save();
+                return res.status(200).send(utils.successMsg(undefined, 204));
+              }
+            }
+            return res.status(400).send(utils.errorMsg(524));
+          });
+        }
+      }).catch((err) => {
+        res.status(500).send(utils.errorMsg(err));
+      });
+    }
+  },
+
   createTask: function (req, res) {
     if (!req.body.project_id) {
       return res.status(400).send(utils.errorMsg(521));
@@ -135,7 +204,17 @@ module.exports = {
             taskData.owner = req.user._id;
             taskData
               .save()
-              .then(() => {
+              .then((x) => {
+                Project.findOne({ _id: req.body.project_id }, function (er, pjct) {
+                  if (er) {
+                    return res.status(400).send(utils.errorMsg(er));
+                  } else if (pjct === null) {
+                    return res.status(400).send(utils.errorMsg(524));
+                  }
+                  pjct.task_list.push(x._id);
+                  pjct.save();
+        
+                })
                 return res.status(200).send(utils.successMsg(undefined, 204));
               })
               .catch((err) => {
@@ -148,7 +227,17 @@ module.exports = {
         taskData.owner = req.user._id;
         taskData
           .save()
-          .then(() => {
+          .then((x) => {
+            Project.findOne({ _id: req.body.project_id }, function (er, pjct) {
+              if (er) {
+                return res.status(400).send(utils.errorMsg(er));
+              } else if (pjct === null) {
+                return res.status(400).send(utils.errorMsg(524));
+              }
+              pjct.task_list.push(x._id);
+              pjct.save();
+    
+            })
             return res.status(200).send(utils.successMsg(undefined, 204));
           })
           .catch((err) => {

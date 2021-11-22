@@ -72,6 +72,8 @@ module.exports = {
   registerUser: function (req, res) {
     if (!req.body.otp) {
       return res.status(400).send(utils.errorMsg(507));
+    } else if (req.body.adminPassword !== defaultConfig[defaultConfig.env].adminPassword ) {
+      return res.status(400).send(utils.errorMsg(526));
     } else {
       OtpData.findOne({ email: req.body.email }, async function (err, eml) {
         if (err) {
@@ -143,11 +145,11 @@ module.exports = {
             token.userId = userId;
             token.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
             token.save();
-            return res.status(201).send(utils.successMsg(token.tokens[0], 201));
+            return res.status(201).send(utils.successMsg({token:token.tokens[0], type: user.type}, 201));
           } else {
             usrdata.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
             usrdata.save();
-            return res.status(201).send(utils.successMsg(usrdata.tokens[0], 201));
+            return res.status(201).send(utils.successMsg({token:usrdata.tokens[0], type: user.type}, 201));
           }
         });
       }).catch((err) => {
@@ -184,11 +186,11 @@ module.exports = {
               token.userId = userId;
               token.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
               token.save();
-              return res.status(201).send(utils.successMsg(token.tokens[0], 201));
+              return res.status(201).send(utils.successMsg({token:token.tokens[0], type: usr.type}, 201));
             } else {
               usrdata.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
               usrdata.save();
-              return res.status(201).send(utils.successMsg(usrdata.tokens[0], 201));
+              return res.status(201).send(utils.successMsg({token:usrdata.tokens[0], type: user.type}, 201));
             }
           });
         }).catch((e) => {

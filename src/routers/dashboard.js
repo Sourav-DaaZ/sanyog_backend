@@ -28,6 +28,10 @@ router.post("/assign_task", auth, async (req, res) => {
   const action = "assign_task";
   controllerObj.controller(req, res, action);
 });
+router.post("/assign_project", auth, async (req, res) => {
+  const action = "assign_project";
+  controllerObj.controller(req, res, action);
+});
 
 router.patch("/edit_task", auth, async (req, res) => {
   const action = "edit_task";

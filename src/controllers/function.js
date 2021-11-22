@@ -35,6 +35,10 @@ module.exports = {
     controller: "dashboard_auth",
     function: "assignTask",
   },
+  assign_project: {
+    controller: "dashboard_auth",
+    function: "assignProject",
+  },
   all_task: {
     controller: "dashboard_auth",
     function: "allTask",

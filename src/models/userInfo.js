@@ -18,9 +18,25 @@ const userSchema = new mongoose.Schema(
       minlength: 7,
       trim: true,
     },
+    type: {
+      type: String,
+      default: "user",
+      trim: true,
+    },
+    jobTitle: {
+      type: String,
+      trim: true,
+    },
+    projects: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Project",
+      },
+    ],
     tasks: [
       {
-          type: mongoose.Schema.Types.ObjectId, ref: 'Task'
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Task",
       },
     ],
     images: Array,
