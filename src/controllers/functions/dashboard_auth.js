@@ -26,8 +26,8 @@ module.exports = {
         temp = [],
         x.task_list.map((y, i)=>(
           new Date(y.end_date) < new Date()?dateExp[index] = true:null,
-          temp.push(y.status),
-          x.task_list.length == i+1 ?x.task_list.includes('in progress') || x.task_list.includes('complete')?x.task_list.includes('in progress')?taskStatus[index] = 'in progress':taskStatus[index] = 'complete':taskStatus[index] = 'created':null,
+          temp[index]= y.status,
+          x.task_list.length == i+1 ?temp.includes('in progress') || temp.includes('complete')?temp.includes('in progress')?taskStatus[index] = 'in progress':taskStatus[index] = 'complete':taskStatus[index] = 'created':null,
           y.taskAssigned.map((z)=>(
             cost[index] = cost[index] + z.cost
           ))
