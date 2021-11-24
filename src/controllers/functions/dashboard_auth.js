@@ -26,10 +26,11 @@ module.exports = {
         temp = [],
         x.task_list.map((y, i)=>(
           new Date(y.end_date) < new Date()?dateExp[index] = true:null,
-          temp[index]= y.status,
+          temp[i] = y.status,
+          console.log(temp,x.task_list.length, i+1),
           x.task_list.length == i+1 ?temp.includes('in progress') || temp.includes('complete')?temp.includes('in progress')?taskStatus[index] = 'in progress':taskStatus[index] = 'complete':taskStatus[index] = 'created':null,
           y.taskAssigned.map((z)=>(
-            cost[index] = cost[index] + z.cost
+            cost[index] = cost[index] + (z.cost * z.time)
           ))
         ))
       ))
