@@ -19,44 +19,32 @@ module.exports = {
     controller: "user_auth",
     function: "userNameVerification",
   },
-  create_project: {
+  regular_update: {
     controller: "dashboard_auth",
-    function: "createProject",
+    function: "regularUpdate",
   },
-  all_project: {
+  get_trainer: {
     controller: "dashboard_auth",
-    function: "allProject",
+    function: "getTrainer",
   },
-  create_task: {
+  edit_trainer: {
     controller: "dashboard_auth",
-    function: "createTask",
+    function: "editTrainer",
   },
-  assign_task: {
+  add_training: {
     controller: "dashboard_auth",
-    function: "assignTask",
+    function: "addTraining",
   },
-  assign_project: {
+  get_training: {
     controller: "dashboard_auth",
-    function: "assignProject",
+    function: "getTraining",
   },
-  all_task: {
+  get_chats: {
     controller: "dashboard_auth",
-    function: "allTask",
+    function: "getChats",
   },
-  edit_task: {
+  edit_chats: {
     controller: "dashboard_auth",
-    function: "editTask",
-  },
-  get_task_status: {
-    controller: "dashboard_auth",
-    function: "getTaskStatus",
-  },
-  get_assigned_member: {
-    controller: "dashboard_auth",
-    function: "getAssignedMember",
-  },
-  get_tag_task: {
-    controller: "dashboard_auth",
-    function: "tagTask",
+    function: "editChats",
   },
 };

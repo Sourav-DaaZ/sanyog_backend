@@ -23,22 +23,14 @@ const userSchema = new mongoose.Schema(
       default: "user",
       trim: true,
     },
-    jobTitle: {
-      type: String,
-      trim: true,
+    waterInfo: {
+      type: Number,
+      default: 0
     },
-    projects: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Project",
-      },
-    ],
-    tasks: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Task",
-      },
-    ],
+    calInfo: {
+      type: Number,
+      default: 0
+    },
     images: Array,
   },
   { timestamps: true }

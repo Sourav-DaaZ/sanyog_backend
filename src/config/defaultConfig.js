@@ -3,7 +3,8 @@ const config = {
   dev: {
     port: 5000,
     mongoUri:
-      'mongodb://aman:amanadmin@project-shard-00-00.6espu.mongodb.net:27017,project-shard-00-01.6espu.mongodb.net:27017,project-shard-00-02.6espu.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-9br7mj-shard-0&authSource=admin&retryWrites=true&w=majority',
+      // 'mongodb://aman:amanadmin@project-shard-00-00.6espu.mongodb.net:27017,project-shard-00-01.6espu.mongodb.net:27017,project-shard-00-02.6espu.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-9br7mj-shard-0&authSource=admin&retryWrites=true&w=majority',
+      'mongodb://localhost:27017/getfit',
     gmailId: "userconnect.care@gmail.com",
     gmailPassword: "saaezovtncpdnsho",
     optTime: "2m",

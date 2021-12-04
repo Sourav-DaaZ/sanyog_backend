@@ -72,8 +72,6 @@ module.exports = {
   registerUser: function (req, res) {
     if (!req.body.otp) {
       return res.status(400).send(utils.errorMsg(507));
-    } else if (req.body.adminPassword !== defaultConfig[defaultConfig.env].adminPassword ) {
-      return res.status(400).send(utils.errorMsg(526));
     } else {
       OtpData.findOne({ email: req.body.email }, async function (err, eml) {
         if (err) {

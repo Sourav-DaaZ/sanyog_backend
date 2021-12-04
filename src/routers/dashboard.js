@@ -4,52 +4,36 @@ const auth = require("../middleware/auth");
 const controllerObj = require("../controllers");
 const router = new express.Router();
 
-router.post("/create_project", auth, async (req, res) => {
-  const action = "create_project";
+router.post("/regular_update", auth, async (req, res) => {
+  const action = "regular_update";
   controllerObj.controller(req, res, action);
 });
 
-router.get("/all_project", auth, async (req, res) => {
-  const action = "all_project";
+router.get("/get_trainer", auth, async (req, res) => {
+  const action = "get_trainer";
   controllerObj.controller(req, res, action);
 });
 
-router.post("/create_task", auth, async (req, res) => {
-  const action = "create_task";
+router.post("/edit_trainer", auth, async (req, res) => {
+  const action = "edit_trainer";
   controllerObj.controller(req, res, action);
 });
 
-router.get("/all_task", auth, async (req, res) => {
-  const action = "all_task";
+router.post("/add_training", auth, async (req, res) => {
+  const action = "add_training";
   controllerObj.controller(req, res, action);
 });
 
-router.post("/assign_task", auth, async (req, res) => {
-  const action = "assign_task";
+router.get("/get_training", auth, async (req, res) => {
+  const action = "get_training";
   controllerObj.controller(req, res, action);
 });
-router.post("/assign_project", auth, async (req, res) => {
-  const action = "assign_project";
+router.get("/get_chats", auth, async (req, res) => {
+  const action = "get_chats";
   controllerObj.controller(req, res, action);
 });
-
-router.patch("/edit_task", auth, async (req, res) => {
-  const action = "edit_task";
-  controllerObj.controller(req, res, action);
-});
-
-router.get("/get_task_status", auth, async (req, res) => {
-  const action = "get_task_status";
-  controllerObj.controller(req, res, action);
-});
-
-router.get("/get_assigned_members", auth, async (req, res) => {
-  const action = "get_assigned_member";
-  controllerObj.controller(req, res, action);
-});
-
-router.get("/get_tag_task", auth, async (req, res) => {
-  const action = "get_tag_task";
+router.post("/edit_chats", auth, async (req, res) => {
+  const action = "edit_chats";
   controllerObj.controller(req, res, action);
 });
 
