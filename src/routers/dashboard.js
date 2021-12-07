@@ -36,5 +36,9 @@ router.post("/edit_chats", auth, async (req, res) => {
   const action = "edit_chats";
   controllerObj.controller(req, res, action);
 });
+router.get("/user_data", auth, async (req, res) => {
+  const action = "user_data";
+  controllerObj.controller(req, res, action);
+});
 
 module.exports = router;

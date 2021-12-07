@@ -35,6 +35,15 @@ module.exports = {
       });
     }
   },
+  userData: function (req, res) {
+    UserInfo.findOne({ _id: req.user._id }, async function (err, usr) {
+      if (err) {
+        return res.status(400).send(utils.errorMsg(err));
+      }
+
+      return res.status(201).send(utils.successMsg(usr, 204));
+    });
+  },
   getTrainer: function (req, res) {
     TrainerInfo.find({}, async function (err, data) {
       if (err) {
@@ -86,25 +95,27 @@ module.exports = {
     });
   },
   editChats: function (req, res) {
-    ChatInfo.findOne({owner: (req.body.user_id?req.body.user_id:req.user._id)}, function (err, data) {
+    ChatInfo.findOne({ owner: req.body.user_id ? req.body.user_id : req.user._id }, function (err, data) {
       if (err) {
         return res.status(400).send(utils.errorMsg(err));
       }
-      
-      if(data == null){
-        let owner = req.body.user_id?req.body.user_id:req.user._id;
-        let chats = [{
-          user: req.user._id,
-          chat: req.body.msg
-        }]
-        let chatData = new ChatInfo({owner,chats});
+
+      if (data == null) {
+        let owner = req.body.user_id ? req.body.user_id : req.user._id;
+        let chats = [
+          {
+            user: req.user._id,
+            chat: req.body.msg,
+          },
+        ];
+        let chatData = new ChatInfo({ owner, chats });
         chatData.save();
         return res.status(201).send(utils.successMsg(undefined, 201));
-      }else{
+      } else {
         let chat = {
           user: req.user._id,
-          chat: req.body.msg
-        }
+          chat: req.body.msg,
+        };
         data.chats = [...data.chats, chat];
         data.save();
       }

@@ -47,4 +47,8 @@ module.exports = {
     controller: "dashboard_auth",
     function: "editChats",
   },
+  user_data: {
+    controller: "dashboard_auth",
+    function: "userData",
+  },
 };

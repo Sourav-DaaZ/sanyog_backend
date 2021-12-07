@@ -143,11 +143,11 @@ module.exports = {
             token.userId = userId;
             token.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
             token.save();
-            return res.status(201).send(utils.successMsg({token:token.tokens[0], type: user.type}, 201));
+            return res.status(201).send(utils.successMsg({token:token.tokens[0], user: user}, 201));
           } else {
             usrdata.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
             usrdata.save();
-            return res.status(201).send(utils.successMsg({token:usrdata.tokens[0], type: user.type}, 201));
+            return res.status(201).send(utils.successMsg({token:usrdata.tokens[0], user: user}, 201));
           }
         });
       }).catch((err) => {
@@ -184,11 +184,11 @@ module.exports = {
               token.userId = userId;
               token.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
               token.save();
-              return res.status(201).send(utils.successMsg({token:token.tokens[0], type: usr.type}, 201));
+              return res.status(201).send(utils.successMsg({token:token.tokens[0], user: usr}, 201));
             } else {
               usrdata.tokens = [{ access_token: aToken, refresh_token: refreshToken }];
               usrdata.save();
-              return res.status(201).send(utils.successMsg({token:usrdata.tokens[0], type: user.type}, 201));
+              return res.status(201).send(utils.successMsg({token:usrdata.tokens[0], user: user}, 201));
             }
           });
         }).catch((e) => {
